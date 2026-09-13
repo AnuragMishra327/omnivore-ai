@@ -6,6 +6,14 @@ const plannerAgent = require("./agents/planner");
 const researchAgent = require("./agents/research");
 const architectureAgent = require("./agents/architecture");
 const securityAgent = require("./agents/security");
+const schedulerAgent = require("./agents/scheduler");
+const codingAgent = require("./agents/coding");
+const browserAgent = require("./agents/browser");
+const fileAgent = require("./agents/file");
+const testingAgent = require("./agents/testing");
+const documentationAgent = require("./agents/documentation");
+const memoryAgent = require("./agents/memory");
+const presentationAgent = require("./agents/presentation");
 
 dotenv.config();
 
@@ -36,20 +44,97 @@ app.post("/api/run", async (req, res) => {
       plan,
       research
     );
-    const security = await securityAgent(
-  groq,
-  prompt,
-  plan,
-  research,
-  architecture
-);
+        const security = await securityAgent(
+      groq,
+      prompt,
+      plan,
+      research,
+      architecture
+    );
+
+    const schedule = await schedulerAgent(
+      groq,
+      prompt,
+      plan,
+      research,
+      architecture,
+      security
+    );
+
+    const coding = await codingAgent(
+      groq,
+      prompt,
+      plan,
+      architecture,
+      security,
+      schedule
+    );
+
+    const browser = await browserAgent(
+      groq,
+      prompt,
+      research,
+      schedule
+    );
+
+    const files = await fileAgent(
+      groq,
+      prompt,
+      coding,
+      schedule
+    );
+
+    const testing = await testingAgent(
+      groq,
+      prompt,
+      architecture,
+      coding,
+      security
+    );
+
+    const documentation = await documentationAgent(
+      groq,
+      prompt,
+      plan,
+      architecture,
+      coding,
+      testing
+    );
+
+    const memory = await memoryAgent(
+      groq,
+      prompt,
+      plan,
+      research,
+      architecture,
+      security,
+      schedule
+    );
+
+    const presentation = await presentationAgent(
+      groq,
+      prompt,
+      plan,
+      architecture,
+      coding,
+      testing,
+      documentation
+    );
 
     res.json({
-  plan,
-  research,
-  architecture,
-  security
-});
+      plan,
+      research,
+      architecture,
+      security,
+      schedule,
+      coding,
+      browser,
+      files,
+      testing,
+      documentation,
+      memory,
+      presentation
+    });
 
   } catch (error) {
     console.log("========== GROQ ERROR ==========");
