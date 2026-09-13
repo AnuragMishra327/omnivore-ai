@@ -5,6 +5,7 @@ const Groq = require("groq-sdk");
 const plannerAgent = require("./agents/planner");
 const researchAgent = require("./agents/research");
 const architectureAgent = require("./agents/architecture");
+const securityAgent = require("./agents/security");
 
 dotenv.config();
 
@@ -35,12 +36,20 @@ app.post("/api/run", async (req, res) => {
       plan,
       research
     );
+    const security = await securityAgent(
+  groq,
+  prompt,
+  plan,
+  research,
+  architecture
+);
 
     res.json({
-      plan,
-      research,
-      architecture
-    });
+  plan,
+  research,
+  architecture,
+  security
+});
 
   } catch (error) {
     console.log("========== GROQ ERROR ==========");
