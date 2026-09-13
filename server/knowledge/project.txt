@@ -1,0 +1,13 @@
+Omnivore is a college mini-project.
+
+The backend uses Node.js and Express.
+
+The AI model is accessed through the Groq SDK.
+
+The project contains twelve separate AI agents.
+
+The twelve agents are Planner, Research, Architecture, Security, Scheduler, Coding, Browser, File, Testing, Documentation, Memory, and Presentation.
+
+The system uses a basic RAG layer to retrieve relevant information from the local knowledge base.
+
+The system also uses a basic MCP layer to provide tools that agents can use.

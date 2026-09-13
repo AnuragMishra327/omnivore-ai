@@ -1,0 +1,7 @@
+Omnivore is an AI agent orchestration system.
+
+Omnivore receives a user request and divides the request into smaller tasks.
+
+The system uses multiple specialized AI agents. Each agent is responsible for a particular part of the overall task.
+
+The goal of Omnivore is to demonstrate how multiple AI agents can work together to solve a user's request.

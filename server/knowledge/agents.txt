@@ -1,0 +1,23 @@
+Planner Agent: Creates a structured plan for the user's request.
+
+Research Agent: Provides relevant research and information for the task.
+
+Architecture Agent: Designs the technical architecture for the task.
+
+Security Agent: Identifies security risks and security requirements.
+
+Scheduler Agent: Determines task order and dependencies.
+
+Coding Agent: Produces implementation code or coding guidance.
+
+Browser Agent: Identifies useful web information and external resources.
+
+File Agent: Determines required files, folders, and project structure.
+
+Testing Agent: Defines tests, edge cases, and validation steps.
+
+Documentation Agent: Creates technical documentation and setup instructions.
+
+Memory Agent: Organizes important project context and decisions.
+
+Presentation Agent: Creates a clear presentation-ready summary of the work.

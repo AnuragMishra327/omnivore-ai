@@ -14,8 +14,9 @@ const testingAgent = require("./agents/testing");
 const documentationAgent = require("./agents/documentation");
 const memoryAgent = require("./agents/memory");
 const presentationAgent = require("./agents/presentation");
+const retrieve = require("./rag");
 
-dotenv.config();
+dotenv.config({ path: __dirname + "/.env" });
 
 const app = express();
 
@@ -33,8 +34,13 @@ app.get("/", (req, res) => {
 app.post("/api/run", async (req, res) => {
   try {
     const { prompt } = req.body;
+    const ragResults = retrieve(prompt);
 
-    const plan = await plannerAgent(groq, prompt);
+const context = ragResults
+  .map(result => result.content)
+  .join("\n\n");
+
+    const plan = await plannerAgent(groq, prompt, context);
 
     const research = await researchAgent(groq, prompt, plan);
 
@@ -133,7 +139,8 @@ app.post("/api/run", async (req, res) => {
       testing,
       documentation,
       memory,
-      presentation
+      presentation,
+      ragResults
     });
 
   } catch (error) {
