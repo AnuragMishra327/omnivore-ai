@@ -1,6 +1,7 @@
 async function architectureAgent(groq, prompt, plan, research) {
   const response = await groq.chat.completions.create({
     model: "openai/gpt-oss-20b",
+    max_completion_tokens: 300,
     messages: [
       {
         role: "system",
