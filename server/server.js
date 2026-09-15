@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const Groq = require("groq-sdk");
+
 const plannerAgent = require("./agents/planner");
 const researchAgent = require("./agents/research");
 const architectureAgent = require("./agents/architecture");
@@ -14,7 +15,9 @@ const testingAgent = require("./agents/testing");
 const documentationAgent = require("./agents/documentation");
 const memoryAgent = require("./agents/memory");
 const presentationAgent = require("./agents/presentation");
+
 const retrieve = require("./rag");
+const runTool = require("./mcp/mcp");
 
 dotenv.config({ path: __dirname + "/.env" });
 
@@ -34,15 +37,27 @@ app.get("/", (req, res) => {
 app.post("/api/run", async (req, res) => {
   try {
     const { prompt } = req.body;
+
     const ragResults = retrieve(prompt);
 
-const context = ragResults
-  .map(result => result.content)
-  .join("\n\n");
+    const context = ragResults
+      .map(result => result.content)
+      .join("\n\n");
 
-    const plan = await plannerAgent(groq, prompt, context);
+    const mcpAgents = runTool("listAgents");
+    const projectInfo = runTool("getProjectInfo");
 
-    const research = await researchAgent(groq, prompt, plan);
+    const plan = await plannerAgent(
+      groq,
+      prompt,
+      context
+    );
+
+    const research = await researchAgent(
+      groq,
+      prompt,
+      plan
+    );
 
     const architecture = await architectureAgent(
       groq,
@@ -50,53 +65,64 @@ const context = ragResults
       plan,
       research
     );
-        const security = await securityAgent(
-      groq,
-      prompt,
-      plan,
-      research,
-      architecture
-    );
 
-    const schedule = await schedulerAgent(
-      groq,
-      prompt,
-      plan,
-      research,
-      architecture,
-      security
-    );
-
-    const coding = await codingAgent(
-      groq,
-      prompt,
-      plan,
-      architecture,
+    const [
       security,
-      schedule
-    );
+      schedule,
+      browser
+    ] = await Promise.all([
+      securityAgent(
+        groq,
+        prompt,
+        plan,
+        research,
+        architecture
+      ),
 
-    const browser = await browserAgent(
-      groq,
-      prompt,
-      research,
-      schedule
-    );
+      schedulerAgent(
+        groq,
+        prompt,
+        plan,
+        research,
+        architecture
+      ),
 
-    const files = await fileAgent(
-      groq,
-      prompt,
+      browserAgent(
+        groq,
+        prompt,
+        research,
+        ""
+      )
+    ]);
+
+    const [
       coding,
-      schedule
-    );
+      files,
+      testing
+    ] = await Promise.all([
+      codingAgent(
+        groq,
+        prompt,
+        architecture,
+        security,
+        schedule
+      ),
 
-    const testing = await testingAgent(
-      groq,
-      prompt,
-      architecture,
-      coding,
-      security
-    );
+      fileAgent(
+        groq,
+        prompt,
+        "",
+        schedule
+      ),
+
+      testingAgent(
+        groq,
+        prompt,
+        architecture,
+        "",
+        security
+      )
+    ]);
 
     const documentation = await documentationAgent(
       groq,
@@ -140,7 +166,9 @@ const context = ragResults
       documentation,
       memory,
       presentation,
-      ragResults
+      ragResults,
+      mcpAgents,
+      projectInfo
     });
 
   } catch (error) {
@@ -153,6 +181,7 @@ const context = ragResults
     });
   }
 });
+
 app.listen(5000, () => {
   console.log("Omnivore backend running on http://localhost:5000");
 });
