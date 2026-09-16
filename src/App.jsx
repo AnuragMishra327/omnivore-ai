@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, Sparkles } from "lucide-react";
+import AgentWorkflow from "./components/AgentWorkflow";
 import "./index.css";
 
 const agents = {
@@ -24,21 +25,57 @@ function Agent({ name, delay }) {
 }
 
 function App() {
+  const [prompt, setPrompt] = useState("");
+  const [result, setResult] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [showWorkflow, setShowWorkflow] = useState(false);
+  const [workflowKey, setWorkflowKey] = useState(0);
 
-  const [request, setRequest] = useState("");
-  const [status, setStatus] = useState("READY");
+  const workflowRef = useRef(null);
 
-  function runWorkflow() {
-    if (request.trim() === "") {
+  const runWorkflow = async () => {
+    if (!prompt.trim()) {
+      setResult("Please enter a request first.");
       return;
     }
 
-    setStatus("PROCESSING");
+    setLoading(true);
+    setResult("");
+
+    setWorkflowKey((prev) => prev + 1);
+    setShowWorkflow(true);
 
     setTimeout(() => {
-      setStatus("WORKFLOW STARTED");
-    }, 1500);
-  }
+      workflowRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+    }, 150);
+
+    try {
+      const response = await fetch("http://localhost:5000/api/run", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          prompt: prompt
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setResult(data.result);
+      } else {
+        setResult(data.error || "Something went wrong.");
+      }
+    } catch (error) {
+      setResult("Unable to connect to Omnivore backend.");
+    }
+
+    setLoading(false);
+  };
 
   return (
     <div className="app">
@@ -146,22 +183,23 @@ function App() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.7 }}
         >
-
           <input
             className="input-area"
-            value={request}
-            onChange={(e) => setRequest(e.target.value)}
+            type="text"
             placeholder="What do you want Omnivore to accomplish?"
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                runWorkflow();
+              }
+            }}
           />
 
-          <button onClick={runWorkflow}>
-            {status === "PROCESSING"
-              ? "PROCESSING..."
-              : "RUN WORKFLOW"}
-
+          <button onClick={runWorkflow} disabled={loading}>
+            {loading ? "PROCESSING..." : "RUN WORKFLOW"}
             <ArrowRight size={17} />
           </button>
-
         </motion.div>
 
         <motion.div
@@ -178,6 +216,17 @@ function App() {
         </motion.div>
 
       </main>
+
+      {showWorkflow && (
+        <div ref={workflowRef}>
+          <AgentWorkflow
+            key={workflowKey}
+            prompt={prompt}
+            result={result}
+            loading={loading}
+          />
+        </div>
+      )}
 
     </div>
   );
