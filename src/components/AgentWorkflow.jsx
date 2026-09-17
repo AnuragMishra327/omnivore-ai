@@ -5,18 +5,18 @@ const agents = [
   "Planner",
   "Research",
   "Architecture",
+  "Security",
+  "Scheduler",
+  "Browser",
   "Coding",
+  "File",
   "Testing",
   "Documentation",
-  "Presentation",
   "Memory",
-  "Browser",
-  "File",
-  "Security",
-  "Scheduler"
+  "Presentation"
 ];
 
-function AgentWorkflow({ prompt, result, loading }) {
+function AgentWorkflow({ prompt, loading }) {
   const [countdown, setCountdown] = useState(3);
   const [activeAgent, setActiveAgent] = useState(-1);
 
@@ -40,21 +40,25 @@ function AgentWorkflow({ prompt, result, loading }) {
       return;
     }
 
-    setActiveAgent(0);
+    if (loading) {
+      setActiveAgent(0);
 
-    const agentTimer = setInterval(() => {
-      setActiveAgent((current) => {
-        if (current >= agents.length - 1) {
-          clearInterval(agentTimer);
-          return current;
-        }
+      const agentTimer = setInterval(() => {
+        setActiveAgent((current) => {
+          if (current >= agents.length - 1) {
+            clearInterval(agentTimer);
+            return current;
+          }
 
-        return current + 1;
-      });
-    }, 1100);
+          return current + 1;
+        });
+      }, 700);
 
-    return () => clearInterval(agentTimer);
-  }, [countdown]);
+      return () => clearInterval(agentTimer);
+    }
+
+    setActiveAgent(agents.length);
+  }, [countdown, loading]);
 
   return (
     <section className="workflow-screen">
@@ -69,7 +73,9 @@ function AgentWorkflow({ prompt, result, loading }) {
           <h2>
             {countdown > 0
               ? "COMMAND SEQUENCE"
-              : "BUILDING YOUR REQUEST"}
+              : loading
+              ? "BUILDING YOUR REQUEST"
+              : "WORKFLOW COMPLETE"}
           </h2>
         </div>
 
@@ -100,7 +106,6 @@ function AgentWorkflow({ prompt, result, loading }) {
           key={countdown}
           initial={{ opacity: 0, scale: 1.4 }}
           animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0 }}
         >
           {countdown}
         </motion.div>
@@ -111,8 +116,11 @@ function AgentWorkflow({ prompt, result, loading }) {
 
           {agents.map((agent, index) => {
 
-            const isActive = index === activeAgent;
-            const isComplete = index < activeAgent;
+            const isActive =
+              loading && index === activeAgent;
+
+            const isComplete =
+              !loading || index < activeAgent;
 
             return (
               <motion.div
@@ -143,13 +151,11 @@ function AgentWorkflow({ prompt, result, loading }) {
                 </div>
 
                 <div className="workflow-agent-status">
-
                   {isComplete
                     ? "COMPLETE"
                     : isActive
                     ? "ACTIVATED"
                     : "STANDBY"}
-
                 </div>
 
               </motion.div>
@@ -167,28 +173,25 @@ function AgentWorkflow({ prompt, result, loading }) {
         >
           <span className="operation-pulse"></span>
 
-          {activeAgent < agents.length
+          {loading && activeAgent < agents.length
             ? `${agents[activeAgent].toUpperCase()} IS ACTIVATED`
             : "OMNIVORE WORKFLOW COMPLETE"}
         </motion.div>
       )}
 
-      {result && !loading && (
+      {!loading && countdown === 0 && (
         <motion.div
-          className="workflow-result"
-          initial={{ opacity: 0, y: 25 }}
+          className="workflow-success"
+          initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
         >
-
-          <div className="result-header">
-            <span className="result-check">✓</span>
-            WORKFLOW COMPLETE
+          <span>✓</span>
+          <div>
+            <strong>Workflow completed successfully</strong>
+            <small>
+              Your generated application is ready below.
+            </small>
           </div>
-
-          <div className="result-content">
-            {result}
-          </div>
-
         </motion.div>
       )}
 

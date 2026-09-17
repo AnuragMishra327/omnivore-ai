@@ -35,7 +35,9 @@ app.get("/", (req, res) => {
 });
 
 app.post("/api/run", async (req, res) => {
+
   try {
+
     const { prompt } = req.body;
 
     const ragResults = retrieve(prompt);
@@ -66,52 +68,49 @@ app.post("/api/run", async (req, res) => {
       research
     );
 
-    const [
+    const security = await securityAgent(
+      groq,
+      prompt,
+      plan,
+      research,
+      architecture
+    );
+
+    const schedule = await schedulerAgent(
+      groq,
+      prompt,
+      plan,
+      research,
+      architecture,
+      security
+    );
+
+    const browser = await browserAgent(
+      groq,
+      prompt,
+      research,
+      schedule
+    );
+
+    const coding = await codingAgent(
+      groq,
+      prompt,
+      plan,
+      architecture,
       security,
-      schedule,
-      browser
-    ] = await Promise.all([
-      securityAgent(
-        groq,
-        prompt,
-        plan,
-        research,
-        architecture
-      ),
-
-      schedulerAgent(
-        groq,
-        prompt,
-        plan,
-        research,
-        architecture
-      ),
-
-      browserAgent(
-        groq,
-        prompt,
-        research,
-        ""
-      )
-    ]);
+      schedule
+    );
 
     const [
-      coding,
       files,
       testing
     ] = await Promise.all([
-      codingAgent(
-        groq,
-        prompt,
-        architecture,
-        security,
-        schedule
-      ),
 
       fileAgent(
         groq,
         prompt,
-        "",
+        architecture,
+        coding,
         schedule
       ),
 
@@ -119,9 +118,10 @@ app.post("/api/run", async (req, res) => {
         groq,
         prompt,
         architecture,
-        "",
+        coding,
         security
       )
+
     ]);
 
     const documentation = await documentationAgent(
@@ -154,24 +154,28 @@ app.post("/api/run", async (req, res) => {
     );
 
     res.json({
+
       plan,
       research,
       architecture,
       security,
       schedule,
-      coding,
       browser,
+      coding,
       files,
       testing,
       documentation,
       memory,
       presentation,
+
       ragResults,
       mcpAgents,
       projectInfo
+
     });
 
   } catch (error) {
+
     console.log("========== GROQ ERROR ==========");
     console.log(error);
     console.log("================================");
@@ -179,7 +183,9 @@ app.post("/api/run", async (req, res) => {
     res.status(500).json({
       error: error.message || "Unknown error"
     });
+
   }
+
 });
 
 app.listen(5000, () => {
