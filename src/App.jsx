@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, Sparkles } from "lucide-react";
 import AgentWorkflow from "./components/AgentWorkflow";
+import ExecutionSidebar from "./components/ExecutionSidebar";
 import "./index.css";
 
 const agents = {
@@ -31,6 +32,13 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [showWorkflow, setShowWorkflow] = useState(false);
   const [workflowKey, setWorkflowKey] = useState(0);
+  const [showSidebar, setShowSidebar] = useState(false);
+
+  const [executionData, setExecutionData] = useState({
+    projectInfo: null,
+    ragResults: [],
+    mcpAgents: []
+  });
 
   const workflowRef = useRef(null);
 
@@ -69,6 +77,7 @@ function App() {
     }
 
     setLoading(true);
+    setShowSidebar(false);
     setResult("");
     setGeneratedCode("");
 
@@ -104,11 +113,25 @@ function App() {
 
       setGeneratedCode(cleanCode);
 
+      setExecutionData({
+        projectInfo: data.projectInfo || null,
+        ragResults: data.ragResults || [],
+        mcpAgents: data.mcpAgents || []
+      });
+
       setResult(
         cleanCode
           ? "Workflow completed successfully."
           : "Workflow completed, but no application was generated."
       );
+
+      setTimeout(() => {
+        document.querySelector(".generated-preview")?.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+      }, 500);
+
     } catch (error) {
       console.error("Omnivore workflow error:", error);
 
@@ -124,6 +147,7 @@ function App() {
     <div className="app">
 
       <nav className="navbar">
+
         <div className="logo">
           <div className="logo-mark">O</div>
           <span>OMNIVORE</span>
@@ -133,6 +157,7 @@ function App() {
           <span className="status-dot"></span>
           SYSTEM ONLINE
         </div>
+
       </nav>
 
       <main className="hero">
@@ -168,6 +193,7 @@ function App() {
           <div className="connection connection-main"></div>
 
           <div className="core-container">
+
             <motion.div
               className="omnivore-core"
               animate={{
@@ -182,10 +208,13 @@ function App() {
                 repeat: Infinity
               }}
             >
+
               <div className="core-ring">
                 <span>O</span>
               </div>
+
             </motion.div>
+
           </div>
 
           <div className="level level-one">
@@ -226,6 +255,7 @@ function App() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.7 }}
         >
+
           <input
             className="input-area"
             type="text"
@@ -239,10 +269,14 @@ function App() {
             }}
           />
 
-          <button onClick={runWorkflow} disabled={loading}>
+          <button
+            onClick={runWorkflow}
+            disabled={loading}
+          >
             {loading ? "PROCESSING..." : "RUN WORKFLOW"}
             <ArrowRight size={17} />
           </button>
+
         </motion.div>
 
         <motion.div
@@ -262,11 +296,13 @@ function App() {
 
       {showWorkflow && (
         <div ref={workflowRef}>
+
           <AgentWorkflow
-  key={workflowKey}
-  prompt={prompt}
-  loading={loading}
-/>
+            key={workflowKey}
+            prompt={prompt}
+            loading={loading}
+          />
+
         </div>
       )}
 
@@ -291,6 +327,19 @@ function App() {
 
           </div>
 
+          <div className="execution-details-action">
+
+            <button
+              className="execution-details-button"
+              onClick={() => setShowSidebar(true)}
+            >
+              <span className="execution-button-dot"></span>
+              VIEW EXECUTION DETAILS
+              <ArrowRight size={16} />
+            </button>
+
+          </div>
+
           <div
             className="preview-frame"
             style={{
@@ -302,6 +351,7 @@ function App() {
               background: "#ffffff"
             }}
           >
+
             <iframe
               title="Omnivore Generated Application"
               srcDoc={generatedCode}
@@ -313,10 +363,20 @@ function App() {
                 display: "block"
               }}
             />
+
           </div>
 
         </section>
       )}
+
+      <ExecutionSidebar
+        open={showSidebar}
+        onClose={() => setShowSidebar(false)}
+        prompt={prompt}
+        projectInfo={executionData.projectInfo}
+        ragResults={executionData.ragResults}
+        mcpAgents={executionData.mcpAgents}
+      />
 
     </div>
   );

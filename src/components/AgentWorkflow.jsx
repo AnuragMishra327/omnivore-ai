@@ -60,6 +60,19 @@ function AgentWorkflow({ prompt, loading }) {
     setActiveAgent(agents.length);
   }, [countdown, loading]);
 
+  useEffect(() => {
+    if (activeAgent >= 0 && activeAgent < agents.length) {
+      const element = document.getElementById(
+        `workflow-agent-${activeAgent}`
+      );
+
+      element?.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+      });
+    }
+  }, [activeAgent]);
+
   return (
     <section className="workflow-screen">
 
@@ -124,6 +137,7 @@ function AgentWorkflow({ prompt, loading }) {
 
             return (
               <motion.div
+                id={`workflow-agent-${index}`}
                 className={`workflow-agent ${
                   isActive ? "active" : ""
                 } ${
@@ -186,12 +200,17 @@ function AgentWorkflow({ prompt, loading }) {
           animate={{ opacity: 1, y: 0 }}
         >
           <span>✓</span>
+
           <div>
-            <strong>Workflow completed successfully</strong>
+            <strong>
+              Workflow completed successfully
+            </strong>
+
             <small>
               Your generated application is ready below.
             </small>
           </div>
+
         </motion.div>
       )}
 
