@@ -46,7 +46,6 @@ function App() {
 
   const workflowRef = useRef(null);
 
-
   const toggleSound = () => {
     setSoundEnabled((current) => {
       const newValue = !current;
@@ -163,7 +162,6 @@ function App() {
             block: "start"
           });
       }, 500);
-
     } catch (error) {
       console.error(
         "Omnivore workflow error:",
@@ -186,8 +184,8 @@ function App() {
         <div className="logo">
 
           <div className="logo-mark">
-            O
-          </div>
+  <span>O</span>
+</div>
 
           <span>
             OMNIVORE
@@ -299,6 +297,10 @@ function App() {
               </div>
 
             </motion.div>
+
+            <span className="core-particle core-particle-one"></span>
+
+            <span className="core-particle core-particle-two"></span>
 
           </div>
 

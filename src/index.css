@@ -138,7 +138,6 @@ button {
   letter-spacing: 3px;
   color: #eef3ff;
 }
-
 .logo-mark {
   position: relative;
   width: 32px;
@@ -160,6 +159,21 @@ button {
   box-shadow:
     0 0 18px rgba(90, 130, 240, 0.14),
     inset 0 0 12px rgba(110, 145, 255, 0.08);
+}
+
+.logo-mark span {
+  position: static !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  font-size: 13px !important;
+  line-height: 1 !important;
+  letter-spacing: normal !important;
+  transform: none !important;
 }
 
 .logo-mark::before {
@@ -351,25 +365,65 @@ h1 {
 }
 
 /* ============================= */
-/* CORE */
+/* OMNIVORE CORE */
 /* ============================= */
 
 .core-container {
   position: absolute;
   left: 50%;
   top: 5px;
+  width: 98px;
+  height: 98px;
   transform: translateX(-50%);
   z-index: 5;
 }
 
+/* OUTER CONCENTRIC RINGS */
+
+.core-container::before,
+.core-container::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.core-container::before {
+  width: 180px;
+  height: 180px;
+  border: 1px solid rgba(255, 255, 255, 0.035);
+  box-shadow:
+    0 0 45px rgba(255, 255, 255, 0.035),
+    inset 0 0 35px rgba(255, 255, 255, 0.025);
+}
+
+.core-container::after {
+  width: 145px;
+  height: 145px;
+  border: 1px dashed rgba(255, 255, 255, 0.055);
+}
+
+/* MAIN CORE */
+
 .omnivore-core {
-  position: relative;
+  position: absolute;
+  left: 0;
+  top: 0;
+
   width: 98px;
   height: 98px;
-  border-radius: 50%;
+
+  z-index: 2;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
+  border-radius: 50%;
+
   background:
     radial-gradient(
       circle at 50% 42%,
@@ -378,48 +432,133 @@ h1 {
       #060a12 72%,
       #03050a 100%
     );
+
   border: 1px solid rgba(125, 158, 240, 0.9);
+
   box-shadow:
     0 0 24px rgba(80, 125, 245, 0.16),
     0 0 70px rgba(70, 105, 190, 0.08),
     inset 0 0 28px rgba(100, 140, 255, 0.1);
+
+  animation: coreBreathing 4s ease-in-out infinite;
 }
 
-.omnivore-core::before {
-  content: "";
-  position: absolute;
-  inset: -8px;
-  border: 1px solid rgba(110, 145, 235, 0.2);
-  border-radius: 50%;
-}
-
-.omnivore-core::after {
-  content: "";
-  position: absolute;
-  inset: -17px;
-  border: 1px solid rgba(100, 140, 230, 0.08);
-  border-radius: 50%;
-}
+/* INNER RING */
 
 .core-ring {
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
   width: 66px;
   height: 66px;
+
+  transform: translate(-50%, -50%);
+
   border-radius: 50%;
+
   border: 1px solid rgba(155, 180, 255, 0.6);
+
   display: flex;
   align-items: center;
   justify-content: center;
+
   background: rgba(5, 9, 16, 0.22);
+
   box-shadow:
     inset 0 0 16px rgba(100, 140, 255, 0.08),
     0 0 16px rgba(100, 140, 255, 0.08);
 }
 
+/* INNER DECORATIVE CIRCLE */
+
+.core-ring::before {
+  content: "";
+
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  width: 50px;
+  height: 50px;
+
+  transform: translate(-50%, -50%);
+
+  border-radius: 50%;
+
+  border: 1px solid rgba(255, 255, 255, 0.035);
+
+  pointer-events: none;
+}
+
+/* ORBITING WHITE DOT */
+
+.core-ring::after {
+  content: "";
+
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  width: 5px;
+  height: 5px;
+
+  margin-left: -2.5px;
+  margin-top: -2.5px;
+
+  border-radius: 50%;
+
+  background: rgba(255, 255, 255, 0.9);
+
+  box-shadow:
+    0 0 8px rgba(255, 255, 255, 0.7),
+    0 0 20px rgba(255, 255, 255, 0.3);
+
+  animation: orbitDot 5s linear infinite;
+
+  pointer-events: none;
+}
+
+/* CORE LETTER */
+
 .core-ring span {
+  position: relative;
+  z-index: 2;
+
   color: #b6c9ff;
   font-size: 27px;
   font-weight: bold;
-  text-shadow: 0 0 18px rgba(130, 160, 255, 0.45);
+
+  text-shadow:
+    0 0 18px rgba(130, 160, 255, 0.45);
+}
+
+/* CORE BREATHING */
+
+@keyframes coreBreathing {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.018);
+  }
+}
+
+/* WHITE DOT ORBIT */
+
+@keyframes orbitDot {
+  from {
+    transform: rotate(0deg) translateY(-28px);
+  }
+
+  to {
+    transform: rotate(360deg) translateY(-28px);
+  }
 }
 
 /* ============================= */
@@ -513,15 +652,12 @@ h1 {
 }
 
 .agent-dot {
-  position: relative;
-  z-index: 1;
-  width: 7px;
-  height: 7px;
-  flex-shrink: 0;
+  width: 4px;
+  height: 4px;
   border-radius: 50%;
-  background: #0b1321;
-  border: 1px solid #789bef;
-  box-shadow: 0 0 8px rgba(90, 135, 255, 0.42);
+  background: rgba(120, 150, 255, 0.5);
+  box-shadow: 0 0 5px rgba(120, 150, 255, 0.25);
+  flex-shrink: 0;
 }
 
 /* ============================= */
@@ -931,13 +1067,28 @@ h1 {
     0 8px 30px rgba(0, 0, 0, 0.08),
     inset 0 1px 0 rgba(255, 255, 255, 0.018);
   transition:
-    border-color 0.4s ease,
-    background 0.4s ease,
-    box-shadow 0.4s ease,
-    transform 0.4s ease;
+    transform 0.35s ease,
+    border-color 0.35s ease,
+    box-shadow 0.35s ease,
+    background 0.35s ease;
 }
 
 .workflow-agent::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.035),
+    transparent
+  );
+  transform: translateX(-100%);
+  transition: transform 0.7s ease;
+  pointer-events: none;
+}
+
+.workflow-agent::after {
   content: "";
   position: absolute;
   top: 0;
@@ -948,6 +1099,26 @@ h1 {
   transition: background 0.4s ease;
 }
 
+.workflow-agent:hover {
+  transform: translateX(5px);
+}
+
+.workflow-agent:hover::before {
+  transform: translateX(100%);
+}
+
+/* STANDBY */
+
+.workflow-agent:not(.active):not(.complete) {
+  opacity: 0.58;
+}
+
+.workflow-agent:not(.active):not(.complete) .workflow-agent-dot {
+  opacity: 0.7;
+}
+
+/* ACTIVE AGENT */
+
 .workflow-agent.active {
   border-color: rgba(120, 156, 255, 0.78);
   background:
@@ -957,15 +1128,37 @@ h1 {
       rgba(12, 21, 38, 0.92)
     );
   box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.08),
     0 0 35px rgba(90, 135, 255, 0.14),
     inset 0 0 25px rgba(90, 135, 255, 0.045);
-  transform: translateX(8px);
+  transform: translateX(7px) scale(1.015);
 }
 
-.workflow-agent.active::before {
-  background: #789cff;
-  box-shadow: 0 0 15px rgba(120, 156, 255, 0.7);
+.workflow-agent.active::after {
+  top: 10%;
+  bottom: 10%;
+  width: 2px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow:
+    0 0 10px rgba(255, 255, 255, 0.7),
+    0 0 24px rgba(255, 255, 255, 0.25);
 }
+
+.workflow-agent.active .workflow-agent-dot {
+  animation: agentIconPulse 1.2s ease-in-out infinite;
+}
+
+.workflow-agent.active .workflow-agent-name {
+  text-shadow:
+    0 0 12px rgba(255, 255, 255, 0.18);
+}
+
+.workflow-agent.active .workflow-agent-status {
+  letter-spacing: 0.12em;
+}
+
+/* COMPLETED AGENTS */
 
 .workflow-agent.complete {
   border-color: rgba(80, 130, 110, 0.28);
@@ -975,11 +1168,24 @@ h1 {
       rgba(8, 18, 17, 0.75),
       rgba(6, 12, 15, 0.8)
     );
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.025);
 }
 
-.workflow-agent.complete::before {
+.workflow-agent.complete::after {
   background: rgba(105, 185, 138, 0.5);
 }
+
+.workflow-agent.complete .workflow-agent-dot {
+  box-shadow:
+    0 0 14px rgba(255, 255, 255, 0.055);
+}
+
+.workflow-agent.complete .workflow-agent-status {
+  opacity: 0.72;
+}
+
+/* AGENT NUMBER */
 
 .agent-number {
   width: 45px;
@@ -991,6 +1197,8 @@ h1 {
 .workflow-agent.active .agent-number {
   color: #91abff;
 }
+
+/* WORKFLOW AGENT ICON */
 
 .workflow-agent-dot {
   width: 20px;
@@ -1005,6 +1213,10 @@ h1 {
   color: #8cffb4;
   font-size: 10px;
   box-shadow: inset 0 0 10px rgba(80, 120, 220, 0.04);
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease,
+    border-color 0.3s ease;
 }
 
 .workflow-agent.active .workflow-agent-dot {
@@ -1012,8 +1224,9 @@ h1 {
   background: #789cff;
   color: #07101f;
   box-shadow:
-    0 0 16px rgba(120, 156, 255, 0.8),
+    0 0 22px rgba(120, 156, 255, 0.8),
     inset 0 0 8px rgba(255, 255, 255, 0.2);
+  transform: scale(1.12);
 }
 
 .workflow-agent.complete .workflow-agent-dot {
@@ -1021,7 +1234,34 @@ h1 {
   box-shadow:
     0 0 10px rgba(105, 185, 138, 0.3),
     inset 0 0 8px rgba(105, 185, 138, 0.05);
+  transform: scale(1.02);
 }
+
+.workflow-agent-dot svg {
+  display: block;
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease;
+}
+
+.workflow-agent:hover .workflow-agent-dot svg {
+  transform: scale(1.08);
+}
+
+/* ACTIVE ICON */
+
+@keyframes agentIconPulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.12);
+  }
+}
+
+/* AGENT NAME */
 
 .workflow-agent-name {
   flex: 1;
@@ -1037,6 +1277,8 @@ h1 {
 .workflow-agent.complete .workflow-agent-name {
   color: #9aa8a0;
 }
+
+/* AGENT STATUS */
 
 .workflow-agent-status {
   color: #394557;
@@ -1068,6 +1310,20 @@ h1 {
   color: #7184a7;
   font-size: 9px;
   letter-spacing: 2.5px;
+}
+
+.current-operation::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: -18px;
+  width: 1px;
+  height: 18px;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgba(255, 255, 255, 0.25)
+  );
 }
 
 .operation-pulse {
@@ -1300,7 +1556,7 @@ h1 {
   }
 
   .workflow-agent.active {
-    transform: translateX(4px);
+    transform: translateX(4px) scale(1.01);
   }
 
   .workflow-result {
@@ -1328,184 +1584,217 @@ h1 {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
-}
-.workflow-agent-dot {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition:
-    transform 0.3s ease,
-    box-shadow 0.3s ease,
-    border-color 0.3s ease;
-}
 
-.workflow-agent.active .workflow-agent-dot {
-  transform: scale(1.12);
-  box-shadow: 0 0 22px rgba(255, 255, 255, 0.16);
-}
-
-.workflow-agent.complete .workflow-agent-dot {
-  transform: scale(1.02);
-}
-
-.workflow-agent-dot svg {
-  display: block;
-}
-/* =========================================
-   ENHANCEMENT #3 — AGENT CARD ANIMATIONS
-   ========================================= */
-
-.workflow-agent {
-  position: relative;
-  overflow: hidden;
-  transition:
-    transform 0.35s ease,
-    border-color 0.35s ease,
-    box-shadow 0.35s ease,
-    background 0.35s ease;
-}
-
-.workflow-agent::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.035),
-    transparent
-  );
-  transform: translateX(-100%);
-  transition: transform 0.7s ease;
-  pointer-events: none;
-}
-
-.workflow-agent:hover {
-  transform: translateX(5px);
-}
-
-.workflow-agent:hover::before {
-  transform: translateX(100%);
-}
-
-/* Standby */
-
-.workflow-agent:not(.active):not(.complete) {
-  opacity: 0.58;
-}
-
-.workflow-agent:not(.active):not(.complete) .workflow-agent-dot {
-  opacity: 0.7;
-}
-
-/* Active agent */
-
-.workflow-agent.active {
-  transform: translateX(7px) scale(1.015);
-  box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.08),
-    0 0 28px rgba(255, 255, 255, 0.08);
-}
-
-.workflow-agent.active::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 10%;
-  bottom: 10%;
-  width: 2px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.9);
-  box-shadow:
-    0 0 10px rgba(255, 255, 255, 0.7),
-    0 0 24px rgba(255, 255, 255, 0.25);
-}
-
-.workflow-agent.active .workflow-agent-dot {
-  animation: agentIconPulse 1.2s ease-in-out infinite;
-}
-
-.workflow-agent.active .workflow-agent-name {
-  text-shadow:
-    0 0 12px rgba(255, 255, 255, 0.18);
-}
-
-.workflow-agent.active .workflow-agent-status {
-  letter-spacing: 0.12em;
-}
-
-/* Completed agents */
-
-.workflow-agent.complete {
-  box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.025);
-}
-
-.workflow-agent.complete .workflow-agent-dot {
-  box-shadow:
-    0 0 14px rgba(255, 255, 255, 0.055);
-}
-
-.workflow-agent.complete .workflow-agent-status {
-  opacity: 0.72;
-}
-
-/* Agent icon */
-
-.workflow-agent-dot svg {
-  transition:
-    transform 0.3s ease,
-    opacity 0.3s ease;
-}
-
-.workflow-agent:hover .workflow-agent-dot svg {
-  transform: scale(1.08);
-}
-
-/* Active icon animation */
-
-@keyframes agentIconPulse {
-  0%,
-  100% {
-    transform: scale(1);
-  }
-
-  50% {
-    transform: scale(1.12);
-  }
-}
-
-/* Current operation connection */
-
-.current-operation {
-  position: relative;
-}
-
-.current-operation::before {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: -18px;
-  width: 1px;
-  height: 18px;
-  background: linear-gradient(
-    to bottom,
-    transparent,
-    rgba(255, 255, 255, 0.25)
-  );
-}
-
-/* Reduced motion */
-
-@media (prefers-reduced-motion: reduce) {
+  .core-container::before,
+  .core-container::after,
+  .omnivore-core,
+  .core-ring::after,
   .workflow-agent,
   .workflow-agent::before,
   .workflow-agent-dot,
   .workflow-agent-dot svg {
+    animation: none;
     transition: none;
   }
+}
+ /* =========================================
+   ENHANCEMENT #5 — INNER DUAL CORE COLLISION
+   ========================================= */
 
-  .workflow-agent.active .workflow-agent-dot {
+.core-particle {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 4px;
+  height: 4px;
+  margin-left: -2px;
+  margin-top: -2px;
+  border-radius: 50%;
+  background: rgba(205, 220, 255, 0.75);
+  box-shadow:
+    0 0 4px rgba(210, 225, 255, 0.55),
+    0 0 10px rgba(150, 180, 255, 0.3);
+  z-index: 10;
+  pointer-events: none;
+}
+
+/* =========================================
+   PARTICLE ONE
+   ========================================= */
+
+.core-particle-one {
+  animation:
+    coreParticleOneCollision
+    4s
+    cubic-bezier(0.65, 0, 0.35, 1)
+    infinite;
+}
+
+
+/* =========================================
+   PARTICLE TWO
+   ========================================= */
+
+.core-particle-two {
+  animation:
+    coreParticleTwoCollision
+    4s
+    cubic-bezier(0.65, 0, 0.35, 1)
+    infinite;
+}
+
+
+/* =========================================
+   PARTICLE ONE
+
+   Starts at TOP of the INNER CIRCLE.
+   Moves clockwise toward RIGHT.
+   Collides.
+   Returns to TOP.
+   ========================================= */
+
+@keyframes coreParticleOneCollision {
+
+  0% {
+    transform:
+      rotate(0deg)
+      translateX(28px)
+      scale(1);
+  }
+
+  40% {
+    transform:
+      rotate(55deg)
+      translateX(28px)
+      scale(1);
+  }
+
+  47% {
+    transform:
+      rotate(82deg)
+      translateX(28px)
+      scale(1.15);
+  }
+
+  50% {
+    transform:
+      rotate(90deg)
+      translateX(28px)
+      scale(1.9);
+
+    box-shadow:
+      0 0 12px rgba(255, 255, 255, 1),
+      0 0 28px rgba(255, 255, 255, 1),
+      0 0 55px rgba(150, 185, 255, 0.95);
+  }
+
+  53% {
+    transform:
+      rotate(98deg)
+      translateX(28px)
+      scale(1.15);
+  }
+
+  60% {
+    transform:
+      rotate(125deg)
+      translateX(28px)
+      scale(1);
+  }
+
+  100% {
+    transform:
+      rotate(0deg)
+      translateX(28px)
+      scale(1);
+  }
+}
+
+
+/* =========================================
+   PARTICLE TWO
+
+   Starts at BOTTOM of the INNER CIRCLE.
+   Moves counter-clockwise toward RIGHT.
+   Meets Particle One.
+   Returns to BOTTOM.
+   ========================================= */
+
+@keyframes coreParticleTwoCollision {
+
+  0% {
+    transform:
+      rotate(180deg)
+      translateX(28px)
+      scale(1);
+  }
+
+  40% {
+    transform:
+      rotate(125deg)
+      translateX(28px)
+      scale(1);
+  }
+
+  47% {
+    transform:
+      rotate(98deg)
+      translateX(28px)
+      scale(1.15);
+  }
+
+  50% {
+    transform:
+      rotate(90deg)
+      translateX(28px)
+      scale(1.9);
+
+    box-shadow:
+      0 0 12px rgba(255, 255, 255, 1),
+      0 0 28px rgba(255, 255, 255, 1),
+      0 0 55px rgba(150, 185, 255, 0.95);
+  }
+
+  53% {
+    transform:
+      rotate(82deg)
+      translateX(28px)
+      scale(1.15);
+  }
+
+  60% {
+    transform:
+      rotate(55deg)
+      translateX(28px)
+      scale(1);
+  }
+
+  100% {
+    transform:
+      rotate(180deg)
+      translateX(28px)
+      scale(1);
+  }
+}
+
+
+/* =========================================
+   REMOVE OLD SINGLE ORBIT DOT
+   ========================================= */
+
+.core-ring::after {
+  display: none;
+}
+
+
+/* =========================================
+   REDUCED MOTION
+   ========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+  .core-particle-one,
+  .core-particle-two {
     animation: none;
   }
 }
