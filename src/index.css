@@ -956,3 +956,42 @@ h1 {
     font-size: 7px;
   }
 }
+.navbar-controls {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.sound-toggle {
+  border: 1px solid rgba(120, 140, 180, 0.2);
+  background: rgba(255, 255, 255, 0.025);
+  color: #aeb8ce;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.7px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sound-toggle:hover {
+  color: #ffffff;
+  border-color: rgba(120, 145, 255, 0.5);
+  background: rgba(100, 130, 255, 0.08);
+}
+
+@media (max-width: 600px) {
+  .navbar-controls {
+    gap: 8px;
+  }
+
+  .sound-toggle {
+    padding: 7px 9px;
+    font-size: 9px;
+  }
+
+  .nav-status {
+    display: none;
+  }
+}

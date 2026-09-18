@@ -34,6 +34,10 @@ function App() {
   const [workflowKey, setWorkflowKey] = useState(0);
   const [showSidebar, setShowSidebar] = useState(false);
 
+  const [soundEnabled, setSoundEnabled] = useState(() => {
+    return localStorage.getItem("omnivore-sound") !== "off";
+  });
+
   const [executionData, setExecutionData] = useState({
     projectInfo: null,
     ragResults: [],
@@ -42,6 +46,20 @@ function App() {
 
   const workflowRef = useRef(null);
 
+
+  const toggleSound = () => {
+    setSoundEnabled((current) => {
+      const newValue = !current;
+
+      localStorage.setItem(
+        "omnivore-sound",
+        newValue ? "on" : "off"
+      );
+
+      return newValue;
+    });
+  };
+
   const cleanGeneratedCode = (code) => {
     if (!code) {
       return "";
@@ -49,7 +67,9 @@ function App() {
 
     let cleaned = code.trim();
 
-    const match = cleaned.match(/```(?:html)?\s*([\s\S]*?)```/i);
+    const match = cleaned.match(
+      /```(?:html)?\s*([\s\S]*?)```/i
+    );
 
     if (match) {
       cleaned = match[1].trim();
@@ -64,7 +84,10 @@ function App() {
     const end = cleaned.lastIndexOf("</html>");
 
     if (end !== -1) {
-      cleaned = cleaned.substring(0, end + "</html>".length);
+      cleaned = cleaned.substring(
+        0,
+        end + "</html>".length
+      );
     }
 
     return cleaned.trim();
@@ -92,24 +115,31 @@ function App() {
     }, 150);
 
     try {
-      const response = await fetch("http://localhost:5000/api/run", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          prompt: prompt.trim()
-        })
-      });
+      const response = await fetch(
+        "http://localhost:5000/api/run",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            prompt: prompt.trim()
+          })
+        }
+      );
 
       const data = await response.json();
 
       if (!response.ok) {
-        setResult(data.error || "Something went wrong.");
+        setResult(
+          data.error || "Something went wrong."
+        );
         return;
       }
 
-      const cleanCode = cleanGeneratedCode(data.coding);
+      const cleanCode = cleanGeneratedCode(
+        data.coding
+      );
 
       setGeneratedCode(cleanCode);
 
@@ -126,14 +156,19 @@ function App() {
       );
 
       setTimeout(() => {
-        document.querySelector(".generated-preview")?.scrollIntoView({
-          behavior: "smooth",
-          block: "start"
-        });
+        document
+          .querySelector(".generated-preview")
+          ?.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+          });
       }, 500);
 
     } catch (error) {
-      console.error("Omnivore workflow error:", error);
+      console.error(
+        "Omnivore workflow error:",
+        error
+      );
 
       setResult(
         "Unable to connect to Omnivore backend. Make sure the backend is running on port 5000."
@@ -149,13 +184,36 @@ function App() {
       <nav className="navbar">
 
         <div className="logo">
-          <div className="logo-mark">O</div>
-          <span>OMNIVORE</span>
+
+          <div className="logo-mark">
+            O
+          </div>
+
+          <span>
+            OMNIVORE
+          </span>
+
         </div>
 
-        <div className="nav-status">
-          <span className="status-dot"></span>
-          SYSTEM ONLINE
+        <div className="navbar-controls">
+
+          <button
+            className="sound-toggle"
+            onClick={toggleSound}
+          >
+            {soundEnabled
+              ? "🔊 SOUND ON"
+              : "🔇 SOUND OFF"}
+          </button>
+
+          <div className="nav-status">
+
+            <span className="status-dot"></span>
+
+            SYSTEM ONLINE
+
+          </div>
+
         </div>
 
       </nav>
@@ -164,26 +222,49 @@ function App() {
 
         <motion.div
           className="eyebrow"
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{
+            opacity: 0,
+            y: 15
+          }}
+          animate={{
+            opacity: 1,
+            y: 0
+          }}
         >
+
           <Sparkles size={14} />
+
           AUTONOMOUS AI AGENT SYSTEM
+
         </motion.div>
 
         <motion.h1
-          initial={{ opacity: 0, scale: 0.96 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8 }}
+          initial={{
+            opacity: 0,
+            scale: 0.96
+          }}
+          animate={{
+            opacity: 1,
+            scale: 1
+          }}
+          transition={{
+            duration: 0.8
+          }}
         >
           OMNIVORE
         </motion.h1>
 
         <motion.p
           className="subtitle"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.4 }}
+          initial={{
+            opacity: 0
+          }}
+          animate={{
+            opacity: 1
+          }}
+          transition={{
+            delay: 0.4
+          }}
         >
           A Cognitive Operating System for Autonomous AI Agents
         </motion.p>
@@ -210,7 +291,11 @@ function App() {
             >
 
               <div className="core-ring">
-                <span>O</span>
+
+                <span>
+                  O
+                </span>
+
               </div>
 
             </motion.div>
@@ -218,42 +303,71 @@ function App() {
           </div>
 
           <div className="level level-one">
-            {agents.level1.map((agent, index) => (
-              <Agent
-                key={agent}
-                name={agent}
-                delay={0.7 + index * 0.1}
-              />
-            ))}
+
+            {agents.level1.map(
+              (agent, index) => (
+                <Agent
+                  key={agent}
+                  name={agent}
+                  delay={
+                    0.7 +
+                    index * 0.1
+                  }
+                />
+              )
+            )}
+
           </div>
 
           <div className="level level-two">
-            {agents.level2.map((agent, index) => (
-              <Agent
-                key={agent}
-                name={agent}
-                delay={1 + index * 0.1}
-              />
-            ))}
+
+            {agents.level2.map(
+              (agent, index) => (
+                <Agent
+                  key={agent}
+                  name={agent}
+                  delay={
+                    1 +
+                    index * 0.1
+                  }
+                />
+              )
+            )}
+
           </div>
 
           <div className="level level-three">
-            {agents.level3.map((agent, index) => (
-              <Agent
-                key={agent}
-                name={agent}
-                delay={1.3 + index * 0.1}
-              />
-            ))}
+
+            {agents.level3.map(
+              (agent, index) => (
+                <Agent
+                  key={agent}
+                  name={agent}
+                  delay={
+                    1.3 +
+                    index * 0.1
+                  }
+                />
+              )
+            )}
+
           </div>
 
         </section>
 
         <motion.div
           className="request-box"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.7 }}
+          initial={{
+            opacity: 0,
+            y: 20
+          }}
+          animate={{
+            opacity: 1,
+            y: 0
+          }}
+          transition={{
+            delay: 1.7
+          }}
         >
 
           <input
@@ -261,9 +375,14 @@ function App() {
             type="text"
             placeholder="What do you want Omnivore to accomplish?"
             value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
+            onChange={(e) =>
+              setPrompt(e.target.value)
+            }
             onKeyDown={(e) => {
-              if (e.key === "Enter" && !loading) {
+              if (
+                e.key === "Enter" &&
+                !loading
+              ) {
                 runWorkflow();
               }
             }}
@@ -273,23 +392,44 @@ function App() {
             onClick={runWorkflow}
             disabled={loading}
           >
-            {loading ? "PROCESSING..." : "RUN WORKFLOW"}
+
+            {loading
+              ? "PROCESSING..."
+              : "RUN WORKFLOW"}
+
             <ArrowRight size={17} />
+
           </button>
 
         </motion.div>
 
         <motion.div
           className="tagline"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 2 }}
+          initial={{
+            opacity: 0
+          }}
+          animate={{
+            opacity: 1
+          }}
+          transition={{
+            delay: 2
+          }}
         >
+
           ONE REQUEST
-          <span>•</span>
+
+          <span>
+            •
+          </span>
+
           MULTIPLE AGENTS
-          <span>•</span>
+
+          <span>
+            •
+          </span>
+
           ONE COMPLETE OUTCOME
+
         </motion.div>
 
       </main>
@@ -301,6 +441,7 @@ function App() {
             key={workflowKey}
             prompt={prompt}
             loading={loading}
+            soundEnabled={soundEnabled}
           />
 
         </div>
@@ -312,6 +453,7 @@ function App() {
           <div className="preview-header">
 
             <div>
+
               <span className="preview-label">
                 GENERATED RESULT
               </span>
@@ -319,6 +461,7 @@ function App() {
               <h2>
                 Live Application Preview
               </h2>
+
             </div>
 
             <span className="preview-status">
@@ -331,11 +474,17 @@ function App() {
 
             <button
               className="execution-details-button"
-              onClick={() => setShowSidebar(true)}
+              onClick={() =>
+                setShowSidebar(true)
+              }
             >
+
               <span className="execution-button-dot"></span>
+
               VIEW EXECUTION DETAILS
+
               <ArrowRight size={16} />
+
             </button>
 
           </div>
@@ -347,7 +496,8 @@ function App() {
               height: "700px",
               overflow: "hidden",
               borderRadius: "14px",
-              border: "1px solid rgba(120, 140, 180, 0.2)",
+              border:
+                "1px solid rgba(120, 140, 180, 0.2)",
               background: "#ffffff"
             }}
           >
@@ -371,11 +521,19 @@ function App() {
 
       <ExecutionSidebar
         open={showSidebar}
-        onClose={() => setShowSidebar(false)}
+        onClose={() =>
+          setShowSidebar(false)
+        }
         prompt={prompt}
-        projectInfo={executionData.projectInfo}
-        ragResults={executionData.ragResults}
-        mcpAgents={executionData.mcpAgents}
+        projectInfo={
+          executionData.projectInfo
+        }
+        ragResults={
+          executionData.ragResults
+        }
+        mcpAgents={
+          executionData.mcpAgents
+        }
       />
 
     </div>

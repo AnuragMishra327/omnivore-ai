@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import {
+  playCompletionSound,
+  speakAgentsActivated,
+  speakComplete
+} from "../utils/soundEffects";
 
 const agents = [
   "Planner",
@@ -16,7 +21,7 @@ const agents = [
   "Presentation"
 ];
 
-function AgentWorkflow({ prompt, loading }) {
+function AgentWorkflow({ prompt, loading, soundEnabled }) {
   const [countdown, setCountdown] = useState(3);
   const [activeAgent, setActiveAgent] = useState(-1);
 
@@ -42,6 +47,10 @@ function AgentWorkflow({ prompt, loading }) {
 
     if (loading) {
       setActiveAgent(0);
+
+      if (soundEnabled) {
+        speakAgentsActivated();
+      }
 
       const agentTimer = setInterval(() => {
         setActiveAgent((current) => {
@@ -72,6 +81,17 @@ function AgentWorkflow({ prompt, loading }) {
       });
     }
   }, [activeAgent]);
+
+  useEffect(() => {
+    if (
+      !loading &&
+      countdown === 0 &&
+      soundEnabled
+    ) {
+      playCompletionSound();
+      speakComplete();
+    }
+  }, [loading, countdown, soundEnabled]);
 
   return (
     <section className="workflow-screen">
