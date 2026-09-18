@@ -1,24 +1,76 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
+  CalendarClock,
+  CheckCircle2,
+  Code2,
+  Database,
+  FileText,
+  Globe2,
+  Layers3,
+  LockKeyhole,
+  MemoryStick,
+  Network,
+  Presentation,
+  Search,
+  Workflow
+} from "lucide-react";
+
+import {
   playCompletionSound,
   speakAgentsActivated,
   speakComplete
 } from "../utils/soundEffects";
 
 const agents = [
-  "Planner",
-  "Research",
-  "Architecture",
-  "Security",
-  "Scheduler",
-  "Browser",
-  "Coding",
-  "File",
-  "Testing",
-  "Documentation",
-  "Memory",
-  "Presentation"
+  {
+    name: "Planner",
+    icon: Workflow
+  },
+  {
+    name: "Research",
+    icon: Search
+  },
+  {
+    name: "Architecture",
+    icon: Network
+  },
+  {
+    name: "Security",
+    icon: LockKeyhole
+  },
+  {
+    name: "Scheduler",
+    icon: CalendarClock
+  },
+  {
+    name: "Browser",
+    icon: Globe2
+  },
+  {
+    name: "Coding",
+    icon: Code2
+  },
+  {
+    name: "File",
+    icon: FileText
+  },
+  {
+    name: "Testing",
+    icon: CheckCircle2
+  },
+  {
+    name: "Documentation",
+    icon: FileText
+  },
+  {
+    name: "Memory",
+    icon: MemoryStick
+  },
+  {
+    name: "Presentation",
+    icon: Presentation
+  }
 ];
 
 function AgentWorkflow({ prompt, loading, soundEnabled }) {
@@ -67,7 +119,7 @@ function AgentWorkflow({ prompt, loading, soundEnabled }) {
     }
 
     setActiveAgent(agents.length);
-  }, [countdown, loading]);
+  }, [countdown, loading, soundEnabled]);
 
   useEffect(() => {
     if (activeAgent >= 0 && activeAgent < agents.length) {
@@ -149,6 +201,8 @@ function AgentWorkflow({ prompt, loading, soundEnabled }) {
 
           {agents.map((agent, index) => {
 
+            const Icon = agent.icon;
+
             const isActive =
               loading && index === activeAgent;
 
@@ -163,7 +217,7 @@ function AgentWorkflow({ prompt, loading, soundEnabled }) {
                 } ${
                   isComplete ? "complete" : ""
                 }`}
-                key={agent}
+                key={agent.name}
                 initial={{ opacity: 0, x: -35 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{
@@ -177,11 +231,11 @@ function AgentWorkflow({ prompt, loading, soundEnabled }) {
                 </div>
 
                 <div className="workflow-agent-dot">
-                  {isComplete ? "✓" : ""}
+                  <Icon size={18} strokeWidth={1.8} />
                 </div>
 
                 <div className="workflow-agent-name">
-                  {agent}
+                  {agent.name}
                 </div>
 
                 <div className="workflow-agent-status">
@@ -208,7 +262,7 @@ function AgentWorkflow({ prompt, loading, soundEnabled }) {
           <span className="operation-pulse"></span>
 
           {loading && activeAgent < agents.length
-            ? `${agents[activeAgent].toUpperCase()} IS ACTIVATED`
+            ? `${agents[activeAgent].name.toUpperCase()} IS ACTIVATED`
             : "OMNIVORE WORKFLOW COMPLETE"}
         </motion.div>
       )}

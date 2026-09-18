@@ -1329,3 +1329,25 @@ h1 {
     transition-duration: 0.01ms !important;
   }
 }
+.workflow-agent-dot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease,
+    border-color 0.3s ease;
+}
+
+.workflow-agent.active .workflow-agent-dot {
+  transform: scale(1.12);
+  box-shadow: 0 0 22px rgba(255, 255, 255, 0.16);
+}
+
+.workflow-agent.complete .workflow-agent-dot {
+  transform: scale(1.02);
+}
+
+.workflow-agent-dot svg {
+  display: block;
+}
