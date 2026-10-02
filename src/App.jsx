@@ -230,8 +230,6 @@ function App() {
           }}
         >
 
-          <Sparkles size={14} />
-
         </motion.div>
 
         <motion.h1
