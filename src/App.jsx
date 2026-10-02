@@ -232,8 +232,6 @@ function App() {
 
           <Sparkles size={14} />
 
-          AUTONOMOUS AI AGENT SYSTEM
-
         </motion.div>
 
         <motion.h1
